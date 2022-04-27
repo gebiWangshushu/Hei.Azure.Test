@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload</title>
+</head>
+
+<body>
+    <div>
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <label>
+                            <span class="btn btn-primary">
+                                <input type="file" style="" name="file" id="FileInput" />
+                            </span>
+                        </label>
+                        <input type="hidden" readonly="" id="BrowseInput" />
+                    </div>
+                </div>
+                <div>
+                    <div>
+                        <button type="button" value="Upload to Blob" class="btn btn-success" id="UploadBlob" onclick="uploadBlob()">Upload to Blob</button>
+                    </div>
+                </div>
+                <div class="form-group hidden" id="uploadProgressBarContainer">
+                    Uploading...
+                    <div>
+                        <div role="progressbar" id="uploadProgressBar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">0%</div>
+                        <div id="uploadtime"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="azurestorage/bundle/azure-storage.blob.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+        //切片大小(mb)
+        var blockSize = 2;
+        var finishedOrError = false;
+
+        var speedSummary = null;
+
+        $(document).on('change', ':file',
+            function () {
+                var input = $(this);
+                var label = $('#BrowseInput').val(input.val().replace(/\\/g, '/').replace(/.*\//, ''))
+            });
+
+        function displayProcess(process) {
+            document.getElementById("uploadProgressBar").style.width = process + '%';
+            document.getElementById("uploadProgressBar").innerHTML = process + '%'
+        }
+
+        async function uploadBlob() {
+            let sas = await genalrateSAS();
+            if (!sas) {
+                alert("genalrateSAS failed!")
+            }
+
+            var blobUri = sas.data.accountUrl;
+            var containerName = sas.data.containerName;
+            var sasToken = sas.data.sasToken;
+
+            displayProcess(0);
+            document.getElementById("uploadProgressBarContainer").classList.remove('hidden');
+            var blobService = AzureStorage.Blob.createBlobServiceWithSas(blobUri, sasToken);
+
+            var file = $('#FileInput').get(0).files[0];
+            //var customBlockSize = (file.size > 1024 * 1024 * 32) ? (1024 * 1024 * 4) : (1024 * 512);
+            var customBlockSize = blockSize * 1024 * 1024;
+            blobService.singleBlobPutThresholdInBytes = customBlockSize;
+            console.info("customBlockSize:" + customBlockSize);
+
+            var uploadBegin = new Date();
+            speedSummary = blobService.createBlockBlobFromBrowserFile(containerName, file.name, file,
+                {
+                    blockSize: customBlockSize
+                },
+                function (error, result, response) {
+                    console.info(error);
+                    console.info(result);
+                    console.info(response);
+
+                    finishedOrError = true;
+                    if (error) {
+                        alert(error)
+                        console.warn(error);
+                    } else {
+                        displayProcess(100)
+
+                        var fileMB = (file.size / (1024 * 1024)).toFixed(2);
+                        var oldText = $("#uploadtime").html() + "</br>";
+                        var chunkCount = Math.ceil(file.size / customBlockSize)
+                        $("#uploadtime").html(`${oldText}文件:${file.name}，大小：${fileMB}(Mb)，切片大小:${blockSize}(Mb),切片数:${chunkCount}  上传耗时：${(new Date() - uploadBegin) / 1000}(S)`);
+                    }
+                });
+        }
+
+        function refreshProgress() {
+            setTimeout(function () {
+                if (!finishedOrError && speedSummary) {
+                    var process = speedSummary.getCompletePercent();
+                    displayProcess(process);
+                    refreshProgress()
+                }
+            }, 200)
+        }
+        refreshProgress()
+
+        async function genalrateSAS() {
+            var url = "/api/azure/storage/generatesas";
+            var sasResult = await axios.get(url).then(function (response) {
+                return response.data;
+            }).catch(function (error) {
+                console.log(error);
+            });
+            return sasResult;
+        }
+    </script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</body>
+</html>
