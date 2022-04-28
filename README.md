@@ -4,7 +4,7 @@
 
 ### 运行截图
 
-![image-20220428135815830](D:/learn/netcore/Hei.Azure.Test/images/README/image-20220428135815830.png)
+![image-20220428135815830](./images/image-20220428135815830.png)
 
 ### 流程
 
