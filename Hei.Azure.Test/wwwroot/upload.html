@@ -14,6 +14,8 @@
             <div>
                 <div>
                     <div>
+                        <label>分片大小(Mb)：</label><input  type="text" value="1.0" id="blockSize"/>
+                        <br />
                         <label>
                             <span class="btn btn-primary">
                                 <input type="file" style="" name="file" id="FileInput" />
@@ -43,7 +45,7 @@
 
     <script type="text/javascript">
         //切片大小(mb)
-        var blockSize = 2;
+        var blockSize = 1;
         var finishedOrError = false;
 
         var speedSummary = null;
@@ -68,6 +70,7 @@
             var blobUri = sas.data.accountUrl;
             var containerName = sas.data.containerName;
             var sasToken = sas.data.sasToken;
+            blockSize = $("#blockSize").val() || blockSize;
 
             displayProcess(0);
             document.getElementById("uploadProgressBarContainer").classList.remove('hidden');
@@ -84,10 +87,11 @@
                 {
                     blockSize: customBlockSize
                 },
-                function (error, result, response) {
-                    console.info(error);
-                    console.info(result);
-                    console.info(response);
+                function (error, result, response) {            
+
+                    if (response.isSuccessful) {
+                        console.log(`${new Date()},file:${file.name} upload completed!`);
+                    }
 
                     finishedOrError = true;
                     if (error) {
@@ -99,21 +103,26 @@
                         var fileMB = (file.size / (1024 * 1024)).toFixed(2);
                         var oldText = $("#uploadtime").html() + "</br>";
                         var chunkCount = Math.ceil(file.size / customBlockSize)
-                        $("#uploadtime").html(`${oldText}文件:${file.name}，大小：${fileMB}(Mb)，切片大小:${blockSize}(Mb),切片数:${chunkCount}  上传耗时：${(new Date() - uploadBegin) / 1000}(S)`);
+                        var duration = (new Date() - uploadBegin) / 1000;
+                        var v = (fileMB / duration).toFixed(3);
+                        $("#uploadtime").html(`${oldText}文件:${file.name}，大小：${fileMB}(MB)，切片大小:${blockSize}(MB),切片数:${chunkCount}  上传耗时：${duration}(S)；速率-->${v} MB/s`);
                     }
                 });
+
+            function refreshProgress() {
+                setTimeout(function () {
+                    if (!finishedOrError) {
+                        var process = speedSummary.getCompletePercent();
+                        console.log(`process:${process}`);
+                        displayProcess(process);
+                        refreshProgress()
+                    }
+                }, 300)
+            }
+            refreshProgress()
         }
 
-        function refreshProgress() {
-            setTimeout(function () {
-                if (!finishedOrError && speedSummary) {
-                    var process = speedSummary.getCompletePercent();
-                    displayProcess(process);
-                    refreshProgress()
-                }
-            }, 200)
-        }
-        refreshProgress()
+ 
 
         async function genalrateSAS() {
             var url = "/api/azure/storage/generatesas";
