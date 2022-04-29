@@ -39,6 +39,7 @@ namespace Hei.Azure.Test.Controllers
 
             //注意这里的 SAS 权限设置为All，在生产中，出于安全原因，请仅设置您需要的权限。对于文件上传，只需要 Create，Add，Write即可。
             sasBuilder.SetPermissions(BlobContainerSasPermissions.All);
+            //sasBuilder.SetPermissions(BlobContainerSasPermissions.Create | BlobContainerSasPermissions.Add | BlobContainerSasPermissions.Write);
 
             var sasUri = container.GenerateSasUri(sasBuilder);
 
