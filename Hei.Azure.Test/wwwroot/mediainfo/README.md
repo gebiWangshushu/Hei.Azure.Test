@@ -1,10 +1,14 @@
 # 媒体信息库[mediainfo.js](https://github.com/buzz/mediainfo.js)
 
-这是桌面软件mediainfo的web版，我看了下可以获取的信息非常全，没有仔细对比不过应该跟原桌面版的差不多；
+mediainfo.js是桌面软件mediainfo的web版，我看了下可以获取的信息非常全，没有仔细对比不过应该跟原桌面版的差不多；
+
+原桌面版长这样
+
+![1651289133585](images/1651289133585.png)
 
 
 
-# 运行效果
+# 本示例运行效果
 
 **视频文件：**
 
