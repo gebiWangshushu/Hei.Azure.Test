@@ -77,19 +77,20 @@
             var blobService = AzureStorage.Blob.createBlobServiceWithSas(blobUri, sasToken);
 
             var file = $('#FileInput').get(0).files[0];
-            //var customBlockSize = (file.size > 1024 * 1024 * 32) ? (1024 * 1024 * 4) : (1024 * 512);
             var customBlockSize = blockSize * 1024 * 1024;
             blobService.singleBlobPutThresholdInBytes = customBlockSize;
             console.info("customBlockSize:" + customBlockSize);
 
             var uploadBegin = new Date();
-            speedSummary = blobService.createBlockBlobFromBrowserFile(containerName, file.name, file,
+            speedSummary = blobService.createBlockBlobFromBrowserFile(containerName, guid()+file.name, file,
                 {
                     blockSize: customBlockSize
                 },
                 function (error, result, response) {            
 
                     if (response.isSuccessful) {
+                        //upload sucessful
+                        console.info(response)
                         console.log(`${new Date()},file:${file.name} upload completed!`);
                     }
 
@@ -132,6 +133,13 @@
                 console.log(error);
             });
             return sasResult;
+        }
+ 
+        function guid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
         }
     </script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>

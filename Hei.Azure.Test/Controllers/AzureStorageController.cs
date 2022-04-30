@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Passport.Infrastructure;
 
@@ -12,50 +13,32 @@ namespace Hei.Azure.Test.Controllers
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+        private readonly AzureStorageConfig _azureStorageConfig;
+        private readonly IAzureStorageApi _azureStorageApi;
 
-        public AzureStorageController(IConfiguration configuration)
+        public AzureStorageController(IConfiguration configuration, IAzureStorageApi azureStorageApi)
         {
             _configuration = configuration;
+            _azureStorageConfig = _configuration.GetSection(nameof(AzureStorageConfig)).Get<AzureStorageConfig>();
+            _azureStorageApi = azureStorageApi;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(PassportApiResult<AzureStorageSASResult>), 200)]
         public IActionResult GenerateSAS()
         {
-            var azureStorageConfig = _configuration.GetSection(nameof(AzureStorageConfig)).Get<AzureStorageConfig>();
-            BlobContainerClient container = new(azureStorageConfig.ConnectionString, azureStorageConfig.ContainerName);
-
-            if (!container.CanGenerateSasUri)
-            {
-                return Fail("The container can't generate SAS URI");
-            }
-
-            var sasBuilder = new BlobSasBuilder
-            {
-                BlobContainerName = container.Name,
-                Resource = "c",
-                ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(azureStorageConfig.TokenExpirationMinutes)
-            };
-
-            //注意这里的 SAS 权限设置为All，在生产中，出于安全原因，请仅设置您需要的权限。对于文件上传，只需要 Create，Add，Write即可。
-            sasBuilder.SetPermissions(BlobContainerSasPermissions.All);
-            //sasBuilder.SetPermissions(BlobContainerSasPermissions.Create | BlobContainerSasPermissions.Add | BlobContainerSasPermissions.Write);
-
-            var sasUri = container.GenerateSasUri(sasBuilder);
-
-            var result = new AzureStorageSASResult
-            {
-                AccountName = container.AccountName,
-                AccountUrl = $"{container.Uri.Scheme}://{container.Uri.Host}",
-                ContainerName = container.Name,
-                ContainerUri = container.Uri,
-                SASUri = sasUri,
-                SASToken = sasUri.Query.TrimStart('?'),
-                SASPermission = sasBuilder.Permissions,
-                SASExpire = sasBuilder.ExpiresOn
-            };
+            var result = _azureStorageApi.GenalrateSas();
 
             return Success("Generate Azure Storage Access Signature sucessed.", result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> BlobDownload()
+        {
+            var result = await _azureStorageApi.BlobDownload();
+
+            return File(result, "application/octet-stream");
         }
     }
 }

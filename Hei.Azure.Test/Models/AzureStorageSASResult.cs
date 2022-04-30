@@ -1,6 +1,6 @@
 ﻿namespace Hei.Azure.Test
 {
-    internal class AzureStorageSASResult
+    public class AzureStorageSASResult
     {
         public string AccountName { get; set; }
 
