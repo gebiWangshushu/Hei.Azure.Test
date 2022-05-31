@@ -1,4 +1,6 @@
 using Hei.Azure.Test;
+using Microsoft.EntityFrameworkCore;
+using Passport.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 builder.Services.InjectService();
+builder.Services.AddDbContext<UserContext>(options =>
+{
+    var connectionString = builder.Configuration["CosmosDb:ConnectionString"];
+    var databaseName = builder.Configuration["CosmosDb:DatabaseName"];
+    options.UseCosmos(connectionString, databaseName);
+});
+
+//builder.Services.AddDbContext<UserContext>();
 
 var app = builder.Build();
 

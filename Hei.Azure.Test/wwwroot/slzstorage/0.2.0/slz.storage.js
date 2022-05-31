@@ -27,7 +27,7 @@ class SlzStorage {
 
     async genalrateSAS(fail) {
         let url = this._config.sasGenerateUrl + "?account=" + this._config.sasAccount + "&expirationMinutes=" + this._config.sasExpirationMinutes;
-        let sasResult = await axios.get(url).then(function (response) {
+        let sasResult = await axios.get(url, { headers: this._config.sasHeader }).then(function (response) {
             return response.data;
         }).catch(function (error) {
             console.warn(error);
@@ -113,16 +113,19 @@ class SlzStorage {
 
     async uoloadP(file, progressCallback) {
         let that = this;
+        let result = { sucess: false, message: "" };
 
         return new Promise(async (resolve, reject) => {
             if (!file) {
-                return reject("wrong file format ");
+                result.message = "wrong file format ";
+                return reject(result);
             };
 
             let sas = await that.genalrateSAS(reject);
             if (!sas) {
                 console.error("genalrateSAS failed!");
-                reject("genalrateSAS failed! ");
+                result.message = "genalrateSAS failed!";
+                return reject(result);
             }
 
             let blobUri = sas.data.accountUrl;
@@ -147,16 +150,17 @@ class SlzStorage {
                         sas.data.resourceUrl = `${sas.data.containerUri}/${resourceName}`;
                         sas.data.fileName = file.name;
                         response.data = sas.data;
-                        console.warn("success");
-                        //success && success(result, response);
-                        resolve(result, response);
+                        result.result = result;
+                        result.response = response;
+                        result.sucess = true;
+                        return resolve(result);
                     }
 
                     finishedOrError = true;
                     if (error) {
-                        console.warn("failed");
-                        //fail && fail(error);
-                        reject(error)
+                        result.message = "upload failed";
+                        result.error = error;
+                        return reject(result);
                     } else {
                         console.info("progressCallback");
                         progressCallback(100);
@@ -172,12 +176,7 @@ class SlzStorage {
                 }, 300)
             }
             refreshProgress(progressCallback);
-
-            // }).catch(function (err) {
-            //     console.log(err);
-            //     reject(err);
-            //// });
-        });
+        })
     }
 
     culculateBlockSize(fileSize) {

@@ -27,14 +27,16 @@
                 <div>
                     <div>
                         <button type="button" value="Upload to Blob" class="btn btn-success" id="UploadBlob"
-                            onclick="uploadBlob()">Upload to Blob</button>
+                                onclick="uploadBlob()">
+                            Upload to Blob
+                        </button>
                     </div>
                 </div>
                 <div class="form-group hidden" id="uploadProgressBarContainer">
                     Uploading...
                     <div>
                         <div role="progressbar" id="uploadProgressBar" aria-valuenow="60" aria-valuemin="0"
-                            aria-valuemax="100" style="width: 0%;">0%</div>
+                             aria-valuemax="100" style="width: 0%;">0%</div>
                         <div id="uploadtime"></div>
                     </div>
                 </div>
@@ -45,7 +47,7 @@
     <!-- <script src="azurestorage/bundle/azure-storage.blob.js"></script> -->
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
 
-    <!-- <script src="slzstorage/0.1.0/slz.storage.js"></script> -->
+    <!--  <script src="slzstorage/0.1.0/slz.storage.js"></script>-->
     <script src="slzstorage/0.1.0/slz.storage.mini.js"></script>
 
     <!-- <script src="https://sammci.blob.core.chinacloudapi.cn/wwwstatic/js/slzstorage/0.1.0/slz.storage.js"></script> -->
@@ -67,22 +69,22 @@
             var storage = new SlzStorage({
                 sasGenerateUrl: "https://api-ci.siluzan.com/cutapi/v1/azure/storage/generatesas",
                 sasAccount: "tiktokapi",
+                sasHeader: {
+                    "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Ikx5ZEIyVHJwMzZzOGtJNE5BNWc3WWNvMnROdyIsInR5cCI6IkpXVCIsIng1dCI6Ikx5ZEIyVHJwMzZzOGtJNE5BNWc3WWNvMnROdyJ9.eyJuYmYiOjE2NTMwMTg3NDgsImV4cCI6MTY1MzA1NDc0OCwiaXNzIjoiaHR0cHM6Ly9zc28tY2kuc2lsdXphbi5jb20iLCJhdWQiOlsiaHR0cHM6Ly9zc28tY2kuc2lsdXphbi5jb20vcmVzb3VyY2VzIiwiYXBpMSIsImFwaS11c3NpdGVtYW4iLCJhcGktZmFjZWJvb2siLCJhcGkteW91dHViZSIsImFwaS1nb29nbGUiLCJhcGktZG91eWluIiwiYXBpLWt1YWlzaG91IiwiYXBpLXRpa3RvayIsImFwaS1jdXQiXSwiY2xpZW50X2lkIjoid3d3Iiwic3ViIjoiOGZkNGQzZDMtMGRlNS00YzQ2LWE0NDAtNDdiMWExNDYxZDBkIiwiYXV0aF90aW1lIjoxNjUzMDE4NzQ4LCJpZHAiOiJsb2NhbCIsImVtYWlsIjoic2lAY2d5LmNuIiwibmFtZSI6IuWtn-m-mSIsInJvbGUiOiJTdGV3YXJkSW5kaXZpZHVhbCIsInNjb3BlIjpbIm9wZW5pZCIsInByb2ZpbGUiLCJhcGkxIiwiYXBpLXVzc2l0ZW1hbiIsImFwaS1mYWNlYm9vayIsImFwaS15b3V0dWJlIiwiYXBpLWdvb2dsZSIsImFwaS1kb3V5aW4iLCJhcGkta3VhaXNob3UiLCJhcGktdGlrdG9rIiwiY3V0YXBpLnJ3IiwiYXp1cmVhcGkucnciLCJvZmZsaW5lX2FjY2VzcyJdLCJhbXIiOlsicHdkIl19.qUGTQl9GDCpAY1M8_qwEY3q8II_AjVrOmvNc9sPY_SJsvPa1XrsQaEamjQWUbxsztXKzJhr7hit7xjSWzQp-Ya1wk4YjVbOs7YYi4jISZsNJzHcV2h_B9HFov01jLzYVO_bsfYICC9Z5gNVZnglZY4c6j-XPbw_Ds9QTkoVpbC_UjxU3C1J7IPYkixd3e-vyQDix3wuKnzG8X5_awuKUtRfd-VMpqhcpTEYevVW1IDW21gkRJk68UyAZlbtdJrPr9vQ-pwwoFSPZ2knXST4sMFj-FoBr9108048Qt0iHUXHyBMi_LueypE0mhnOVDmLOBfAYiqtSVpeO4umzOzE5ow"
+                }
             });
 
             storage.uoload(file, function (result, response) {
                 console.info("上传成功回调")
-                 console.info(response.data)
-                 console.info(response.data.resourceUrl)
+                console.info(response.data)
+                console.info(response.data.resourceUrl)
             }, function (error) {
                 console.info("上传失败回调")
                 console.info(error);
             }, function (process) {
-                console.info("上传进度条更新回调:"+process)            
+                console.info("上传进度条更新回调:" + process)
             });
         }
-
-
     </script>
 </body>
-
 </html>

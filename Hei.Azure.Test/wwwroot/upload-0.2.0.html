@@ -93,11 +93,14 @@
                 sasAccount: "cutapi",
             });
 
-            var result = await storage.uoloadP(file).catch((err) => {
+            var uploadResult = await storage.uoloadP(file).catch((err) => {
                 console.info(err);
             });
 
-            console.info(result);
+            console.info(uploadResult);
+
+            //console.info(uploadResult.response.data.resourceUrl);
+
         }
 
         new Promise(function (resolve, reject) {
