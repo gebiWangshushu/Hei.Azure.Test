@@ -8,37 +8,31 @@ using Passport.Infrastructure;
 
 namespace Hei.Azure.Test.Controllers
 {
-    [Route("api/azure/storage/[action]")]
-    public class AzureStorageController : PassportApiController
+    [Route("api/azure/config/[action]")]
+    public class AzureConfigController : PassportApiController
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly AzureStorageConfig _azureStorageConfig;
-        private readonly IAzureStorageApi _azureStorageApi;
 
-        public AzureStorageController(IConfiguration configuration, IAzureStorageApi azureStorageApi)
+        public AzureConfigController(IConfiguration configuration, IAzureStorageApi azureStorageApi)
         {
             _configuration = configuration;
-            _azureStorageConfig = _configuration.GetSection(nameof(AzureStorageConfig)).Get<AzureStorageConfig>();
-            _azureStorageApi = azureStorageApi;
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PassportApiResult<AzureStorageSASResult>), 200)]
-        public IActionResult GenerateSAS()
+        public IActionResult Get(string key)
         {
-            var result = _azureStorageApi.GenalrateSas();
+            var result = _configuration[key];
 
-            return Success("Generate Azure Storage Access Signature sucessed.", result);
+            return Success("get config success", result);
         }
 
-        [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> BlobDownload()
+        public async Task<IActionResult> GetObj(string key)
         {
-            var result = await _azureStorageApi.BlobDownload();
+            var result = _configuration.GetSection(key).Get<AzureStorageConfig>();
 
-            return File(result, "application/octet-stream");
+            return Success("get config success", result);
         }
     }
 }
