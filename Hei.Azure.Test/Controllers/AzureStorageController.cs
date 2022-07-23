@@ -2,6 +2,7 @@
 using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Passport.Infrastructure;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -13,10 +14,12 @@ namespace Hei.Azure.Test.Controllers
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
+        private readonly Settings _settings;
 
-        public AzureConfigController(IConfiguration configuration, IAzureStorageApi azureStorageApi)
+        public AzureConfigController(IConfiguration configuration, IAzureStorageApi azureStorageApi, IOptionsSnapshot<Settings> settings)
         {
             _configuration = configuration;
+            _settings = settings.Value;
         }
 
         [HttpGet]
@@ -25,6 +28,13 @@ namespace Hei.Azure.Test.Controllers
             var result = _configuration[key];
 
             return Success("get config success", result);
+        }
+
+        [HttpGet]
+        public IActionResult GetSentinel()
+        {
+
+            return Success("get sentinel success", _settings);
         }
 
         [HttpGet]
