@@ -22,6 +22,11 @@ namespace Hei.Azure.Test.Controllers
             _settings = settings.Value;
         }
 
+        /// <summary>
+        /// 读取配置string
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         [HttpGet]
         public IActionResult Get(string key)
         {
@@ -30,19 +35,23 @@ namespace Hei.Azure.Test.Controllers
             return Success("get config success", result);
         }
 
+        /// <summary>
+        /// 读取配置对象
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
         [HttpGet]
-        public IActionResult GetSentinel()
-        {
-
-            return Success("get sentinel success", _settings);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetObj(string key)
+        public async Task<IActionResult> GetObject(string key)
         {
             var result = _configuration.GetSection(key).Get<AzureStorageConfig>();
 
             return Success("get config success", result);
+        }
+
+        [HttpGet]
+        public IActionResult GetSentinel()
+        {
+            return Success("get sentinel success", _settings);
         }
     }
 }
