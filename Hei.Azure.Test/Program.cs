@@ -14,16 +14,14 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     //配置不同功能
     config.AddAzureAppConfiguration(options =>
     {
-        ////启用Poll模式的主动更新
+        ////启用Label（多环境）支持
         //options.Connect(connectionString)
-        //    .ConfigureRefresh(refresh =>
-        //    {
-        //        refresh.Register("TestApp:Settings:Sentinel", refreshAll: true).SetCacheExpiration(new TimeSpan(0, 0, 30));
-        //    });
+        //    .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取空Lable的配置
+        //    .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName); //配置过滤器,只读取某个环境的配置
 
-        //////启用Label（多环境）支持
+        //////启用Poll模式的主动更新
         //options.Connect(connectionString)
-        //    .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取所有的Lable的配置
+        //    .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取空Lable的配置
         //    .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName) //配置过滤器,只读取某个环境的配置
         //    .ConfigureRefresh(refresh =>
         //    {
