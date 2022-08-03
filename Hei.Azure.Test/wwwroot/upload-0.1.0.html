@@ -62,7 +62,25 @@
         //             $("#uploadtime").html(`${oldText}文件:${file.name}，大小：${fileMB}(MB)，切片大小:${blockSize}(MB)  上传耗时：${duration}(S)；速率-->${v} MB/s`);
         // }
 
+        function download(href, title) {
+            const a = document.createElement('a');
+            a.setAttribute('href', href);
+            a.setAttribute('download', title);
+            a.click();
+        }
+
+        download(url, 'lzwme-gravatar');
+
         function uploadBlob() {
+
+            var url ="https://sucaici.blob.core.chinacloudapi.cn/be733c60-50b5-49d7-9567-f70947ee988f/33b0e510-7469-42cf-b795-36a752002798.mp4?sv=2021-06-08&se=2022-06-16T19%3A06%3A59Z&sr=b&sp=r&sig=0c9dYrIvCVgx%2Fo7i3lsInBfnDtQ6YKIggNF9W9082H4%3D"
+
+            //download(url, 'lzwme-gravatar');
+            download("https://heinersucai.blob.core.chinacloudapi.cn/vdc0245823/008a6513-2f0c-40d1-adf5-d4afb93b5225.mp4", 'lzwme-gravatar');
+
+            //axios.get("https://sucaici.blob.core.chinacloudapi.cn/be733c60-50b5-49d7-9567-f70947ee988f/33b0e510-7469-42cf-b795-36a752002798.mp4?sv=2021-06-08&se=2022-06-16T19%3A06%3A59Z&sr=b&sp=r&sig=0c9dYrIvCVgx%2Fo7i3lsInBfnDtQ6YKIggNF9W9082H4%3D", { params: {}, responseType: 'blob' })
+            //    .then((res) => { })
+            //    .catch((err) => { })
 
             var file = $('#FileInput').get(0).files[0];
 

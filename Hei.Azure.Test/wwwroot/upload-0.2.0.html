@@ -89,7 +89,8 @@
             var file = $('#FileInput').get(0).files[0];
 
             var storage = new SlzStorage({
-                sasGenerateUrl: "https://api-ci.siluzan.com/cutapi/v1/azure/storage/generatesas",
+                //sasGenerateUrl: "https://api-ci.siluzan.com/cutapi/v1/azure/storage/generatesas",
+                sasGenerateUrl: "http://localhost:5055/v1/material/generateuploadsas",
                 sasAccount: "cutapi",
             });
 
