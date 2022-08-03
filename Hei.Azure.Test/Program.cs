@@ -1,9 +1,8 @@
 using Hei.Azure.Test;
 using Microsoft.EntityFrameworkCore;
-using Passport.Infrastructure;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.FeatureManagement;
+using Microsoft.FeatureManagement.FeatureFilters;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppConfig");
@@ -34,7 +33,11 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
         options.Connect(connectionString)
               .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取所有的Lable的配置
               .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName) //配置过滤器,只读取某个环境的配置
-              .UseFeatureFlags() //启用功能开关特性
+                                                                                        //启用功能开关特性
+                                                                                        //.UseFeatureFlags(options =>
+                                                                                        // {
+                                                                                        //     options.CacheExpirationInterval = TimeSpan.FromMinutes(5); //配置FeatureFlag缓存本地时间
+                                                                                        // })
               .ConfigureRefresh(refresh =>
               {
                   refresh.Register("TestApp:Settings:Sentinel", refreshAll: true).SetCacheExpiration(new TimeSpan(0, 0, 30));
@@ -59,7 +62,15 @@ builder.Services.AddDbContext<UserContext>(options =>
 
 builder.Services.Configure<Settings>(builder.Configuration.GetSection("TestApp:Settings"));
 builder.Services.AddAzureAppConfiguration(); //启用Poll模式的主动更新
-builder.Services.AddFeatureManagement(); //功能开关
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+//功能开关
+//builder.Services.AddFeatureManagement();
+//功能开关(过滤器)
+builder.Services.AddFeatureManagement()
+    .AddFeatureFilter<PercentageFilter>()
+    .AddFeatureFilter<TimeWindowFilter>()
+    .AddFeatureFilter<CustomFeatureFilter>()
+    ;
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

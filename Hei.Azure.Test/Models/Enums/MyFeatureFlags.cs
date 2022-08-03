@@ -2,6 +2,11 @@
 {
     public enum MyFeatureFlags
     {
-        Beta
+        Beta,
+        V1,
+        V2,
+        PercentageFlag,
+        TimeWindowFlag,
+        CustomFeatureFlag
     }
 }
