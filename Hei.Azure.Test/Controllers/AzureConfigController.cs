@@ -2,43 +2,56 @@
 using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Passport.Infrastructure;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Hei.Azure.Test.Controllers
 {
-    [Route("api/azure/storage/[action]")]
-    public class AzureStorageController : PassportApiController
+    [Route("api/azure/config/[action]")]
+    public class AzureConfigController : PassportApiController
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly AzureStorageConfig _azureStorageConfig;
-        private readonly IAzureStorageApi _azureStorageApi;
+        private readonly Settings _settings;
 
-        public AzureStorageController(IConfiguration configuration, IAzureStorageApi azureStorageApi)
+        public AzureConfigController(IConfiguration configuration, IAzureStorageApi azureStorageApi, IOptionsSnapshot<Settings> settings)
         {
             _configuration = configuration;
-            _azureStorageConfig = _configuration.GetSection(nameof(AzureStorageConfig)).Get<AzureStorageConfig>();
-            _azureStorageApi = azureStorageApi;
+            _settings = settings.Value;
+        }
+
+        /// <summary>
+        /// 读取配置string
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult Get(string key)
+        {
+            var result = _configuration[key];
+
+            return Success("get config success", result);
+        }
+
+        /// <summary>
+        /// 读取配置对象
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetObject(string key)
+        {
+            var result = _configuration.GetSection(key).Get<AzureStorageConfig>();
+
+            return Success("get config success", result);
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PassportApiResult<AzureStorageSASResult>), 200)]
-        public IActionResult GenerateSAS()
+        public IActionResult GetSentinel()
         {
-            var result = _azureStorageApi.GenalrateSas();
-
-            return Success("Generate Azure Storage Access Signature sucessed.", result);
-        }
-
-        [AllowAnonymous]
-        [HttpGet]
-        public async Task<IActionResult> BlobDownload()
-        {
-            var result = await _azureStorageApi.BlobDownload();
-
-            return File(result, "application/octet-stream");
+            return Success("get sentinel success", _settings);
         }
     }
 }

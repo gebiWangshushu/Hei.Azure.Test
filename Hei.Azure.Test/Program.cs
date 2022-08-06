@@ -3,9 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.FeatureManagement;
 using Microsoft.FeatureManagement.FeatureFilters;
+using Passport.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("AppConfig");
+IConfigurationRefresher _refresher = null;
 
 builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
 {
@@ -15,37 +17,21 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
     //配置不同功能
     config.AddAzureAppConfiguration(options =>
     {
-        ////启用Label（多环境）支持
-        //options.Connect(connectionString)
-        //    .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取空Lable的配置
-        //    .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName); //配置过滤器,只读取某个环境的配置
-
-        //////启用Poll模式的主动更新
-        //options.Connect(connectionString)
-        //    .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取空Lable的配置
-        //    .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName) //配置过滤器,只读取某个环境的配置
-        //    .ConfigureRefresh(refresh =>
-        //    {
-        //        refresh.Register("TestApp:Settings:Sentinel", refreshAll: true).SetCacheExpiration(new TimeSpan(0, 0, 30));
-        //    });
-
-        ////启用功能开关特性
+        //启用Push模式的主动推送更新配置
         options.Connect(connectionString)
-              .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取所有的Lable的配置
-              .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName) //配置过滤器,只读取某个环境的配置
-                                                                                        //启用功能开关特性
-                                                                                        .UseFeatureFlags(options =>
-                                                                                         {
-                                                                                             //options.CacheExpirationInterval = TimeSpan.FromMinutes(5); //配置FeatureFlag缓存本地时间
-                                                                                         })
-              .ConfigureRefresh(refresh =>
-              {
-                  refresh.Register("TestApp:Settings:Sentinel", refreshAll: true).SetCacheExpiration(new TimeSpan(0, 0, 30));
-              });
+            .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取空Lable的配置
+            .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName) //配置过滤器,只读取某个环境的配置
+            .ConfigureRefresh(refresh =>
+            {
+                refresh.Register("TestApp:Settings:Sentinel", refreshAll: true)
+                       .SetCacheExpiration(TimeSpan.FromDays(10)); //这个刷新频率要设置特别低了
+            });
+        _refresher = options.GetRefresher();
     });
 });
 // Add services to the container.
 
+PassportConfig.InitPassportConfig(builder.Configuration, builder.Environment);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -81,6 +67,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAzureAppConfiguration();//启用Poll模式的主动更新
+app.UseAzureConfigChangeEventHandler(_refresher);
 app.UseStaticFiles();
 app.UseAuthorization();
 app.MapControllers();
