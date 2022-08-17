@@ -34,10 +34,10 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
               .Select(KeyFilter.Any, LabelFilter.Null)//配置过滤器，读取所有的Lable的配置
               .Select(KeyFilter.Any, hostingContext.HostingEnvironment.EnvironmentName) //配置过滤器,只读取某个环境的配置
                                                                                         //启用功能开关特性
-                                                                                        //.UseFeatureFlags(options =>
-                                                                                        // {
-                                                                                        //     options.CacheExpirationInterval = TimeSpan.FromMinutes(5); //配置FeatureFlag缓存本地时间
-                                                                                        // })
+              .UseFeatureFlags(options =>
+                {
+                    options.CacheExpirationInterval = TimeSpan.FromSeconds(30); //配置FeatureFlag缓存本地时间
+                })
               .ConfigureRefresh(refresh =>
               {
                   refresh.Register("TestApp:Settings:Sentinel", refreshAll: true).SetCacheExpiration(new TimeSpan(0, 0, 30));

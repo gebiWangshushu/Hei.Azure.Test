@@ -24,6 +24,10 @@ namespace Hei.Azure.Test.Controllers
         public async Task<IActionResult> Beta()
         {
             var beta = await _featureManager.IsEnabledAsync(nameof(MyFeatureFlags.Beta));
+            if (beta)
+            {
+                //beta版本特有逻辑
+            }
             return Success("Beta", beta);
         }
 
