@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "function_docker": {
+      "commandName": "Project",
+      "commandLineArgs": "--port 7236"
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "httpPort": 33354,
+      "useSSL": false
+    }
+  }
+}

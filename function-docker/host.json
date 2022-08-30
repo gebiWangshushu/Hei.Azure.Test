@@ -1,0 +1,22 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
+    }
+  },
+  "functionTimeout": "02:00:00", //00:35:00
+  "extensions": {
+    "serviceBus": {
+      "messageHandlerOptions": {
+        "maxAutoRenewDuration": "02:00:00",
+        "maxConcurrentCalls": 1
+      },
+      //"maxConcurrentCalls": 1,
+      //"maxConcurrentSessions": 1
+    }
+  }
+}
