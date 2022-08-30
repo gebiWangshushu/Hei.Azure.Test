@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hei.Azure.Test", "Hei.Azure.Test\Hei.Azure.Test.csproj", "{2DFD25BF-5006-422F-8FAF-542248193134}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hei.Azure.ConsoleTest", "Hei.Azure.ConsoleTest\Hei.Azure.ConsoleTest.csproj", "{4104F5DF-AD3E-4E5F-8FFB-FBAE5A19CB0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Hei.Azure.ConsoleTest", "Hei.Azure.ConsoleTest\Hei.Azure.ConsoleTest.csproj", "{4104F5DF-AD3E-4E5F-8FFB-FBAE5A19CB0C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "function-docker", "function-docker\function-docker.csproj", "{DF14559F-880F-4610-BB10-59B1F43D7DD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{4104F5DF-AD3E-4E5F-8FFB-FBAE5A19CB0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4104F5DF-AD3E-4E5F-8FFB-FBAE5A19CB0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4104F5DF-AD3E-4E5F-8FFB-FBAE5A19CB0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF14559F-880F-4610-BB10-59B1F43D7DD7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF14559F-880F-4610-BB10-59B1F43D7DD7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF14559F-880F-4610-BB10-59B1F43D7DD7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF14559F-880F-4610-BB10-59B1F43D7DD7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
