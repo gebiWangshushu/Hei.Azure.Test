@@ -280,7 +280,10 @@ namespace Hei.Azure.ConsoleTest
             }
 
             speechConfig.SetProperty(PropertyId.SpeechServiceResponse_PostProcessingOption, "TrueText");
-            speechConfig.SetProperty(PropertyId.SpeechServiceConnection_RecoLanguage, "zh-CN");
+
+            // speechConfig.SetProperty(PropertyId.SpeechServiceConnection_RecoLanguage, "zh-CN");
+            speechConfig.SetProperty(PropertyId.SpeechServiceConnection_RecoLanguage, "en-US");
+            speechConfig.SetProperty(PropertyId.Speech_SegmentationSilenceTimeoutMs, "100");
 
             return speechConfig;
         }
