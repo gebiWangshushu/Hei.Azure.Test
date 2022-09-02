@@ -11,13 +11,14 @@
 // - Install gstreamer:
 // https://docs.microsoft.com/azure/cognitive-services/speech-service/how-to-use-codec-compressed-audio-input-streams
 
+using Hei.Infrastructure;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 using System.Text;
 
 namespace Hei.Azure.ConsoleTest
 {
-    class Program
+    class Program1
     {
         private UserConfig userConfig;
         private const string usage = @"USAGE: dotnet run -- [...]
@@ -400,7 +401,7 @@ namespace Hei.Azure.ConsoleTest
         // dotnet run -- [args]
         // For example:
         // dotnet run -- --help
-        public static void Main(string[] args)
+        public async static Task Main1(string[] args)
         {
             try
             {
@@ -410,13 +411,15 @@ namespace Hei.Azure.ConsoleTest
                 }
                 else
                 {
-                    Program program = new Program(args);
-                    program.Initialize();
-                    SpeechRecognizer speechRecognizer = program.SpeechRecognizerFromUserConfig();
-                    if (program.RecognizeContinuous(speechRecognizer).Result is string error)
-                    {
-                        Console.WriteLine(error);
-                    }
+                    //Program program = new Program(args);
+                    //program.Initialize();
+                    //SpeechRecognizer speechRecognizer = program.SpeechRecognizerFromUserConfig();
+                    //if (program.RecognizeContinuous(speechRecognizer).Result is string error)
+                    //{
+                    //    Console.WriteLine(error);
+                    //}
+
+                    await new AzureTranslate().Execute("There is no contact with the outside world and no entertainment, only each other's company.");
                 }
             }
             catch (Exception e)
